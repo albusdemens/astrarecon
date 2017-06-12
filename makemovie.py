@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.rc('font', family='DejaVu Sans')
 import matplotlib.pylab as plt
 import time
+import sys
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -20,8 +21,8 @@ print rank, mpisize
 if rank == 0:
 	start = time.time()
 
-proj_data = np.load('/home/gpu/astra_input/recon4x4/dataarray.npy')
-om_vals = np.load('/home/gpu/astra_input/recon4x4/omega.npy')
+proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/A_3d.npy')
+om_vals = np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy')
 
 size = [np.shape(proj_data)[0], np.shape(proj_data)[2]]
 
