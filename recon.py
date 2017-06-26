@@ -51,7 +51,7 @@ vol_geom = astra.create_vol_geom(150, 150, 150)
 
 # Omega angles, create vector array
 # angles = np.linspace(0, 2 * np.pi, 721, True)
-angles = np.load('/home/gpu/astra_input/recon4x4/omega.npy')
+angles = np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy')
 vectors = makevectors(angles)
 
 # Create projection geometry from vector array
@@ -59,7 +59,7 @@ proj_geom = astra.create_proj_geom('parallel3d_vec', 150, 150, vectors)
 # proj_geom = astra.create_proj_geom('parallel3d', 1.0, 1.0, 180, 180, angles)
 
 # Import dataset as (u, angles, v). u and v are columns and rows.
-proj_data = np.load('/home/gpu/astra_input/recon4x4/dataarray.npy')
+proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/dataarray.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
 # proj_data = adjustcenter(proj_data, [128, 125])
 
