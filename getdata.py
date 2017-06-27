@@ -13,9 +13,9 @@ A_3d = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])	# (x, omega, y)
 for oo in range(A.shape[2]):
     A_oo = np.zeros([A.shape[3], A.shape[4]])
     for ii in range(A.shape[0]):
-        for jj in range(A.shape[1]):    
+        for jj in range(A.shape[1]):
 	    A_oo[:,:] += A[ii, jj, oo, :, :]
-    
+
     for kk in range(A.shape[3]):
         for ll in range(A.shape[4]):
             A_3d[kk, oo, ll] = A_oo[kk,ll]

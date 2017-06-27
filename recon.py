@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 def makevectors(om):
 	vectors = np.zeros((len(om), 12))
-	theta = np.radians(10.2)
+	theta = np.radians(10.38)	# Insert the correct diffraction angle
 	factor = np.sin(theta) / np.tan(theta)
 
 	for i, omi in enumerate(om):
@@ -38,31 +38,30 @@ def makevectors(om):
 	return vectors
 
 
-def adjustcenter(dataarray, mp):
-	new_array = dataarray[
-		mp[0] - 100:mp[0] + 100,
-		:,
-		mp[1] - 100:mp[1] + 100]
-	return new_array
+#def adjustcenter(dataarray, mp):
+#	new_array = dataarray[
+#		mp[0] - 100:mp[0] + 100,
+#		:,
+#		mp[1] - 100:mp[1] + 100]
+#	return new_array
 
 
 # Create volume geometry
-vol_geom = astra.create_vol_geom(150, 150, 150)
+vol_geom = astra.create_vol_geom(50, 50, 50)
 
 # Omega angles, create vector array
 # angles = np.linspace(0, 2 * np.pi, 721, True)
-angles = np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy')
+angles = np.radians(np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy'))
 vectors = makevectors(angles)
 
 # Create projection geometry from vector array
-proj_geom = astra.create_proj_geom('parallel3d_vec', 150, 150, vectors)
+proj_geom = astra.create_proj_geom('parallel3d_vec', 300, 300, vectors)
 # proj_geom = astra.create_proj_geom('parallel3d', 1.0, 1.0, 180, 180, angles)
 
 # Import dataset as (u, angles, v). u and v are columns and rows.
-proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/dataarray.npy')
+proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/A_3d.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
 # proj_data = adjustcenter(proj_data, [128, 125])
-
 
 
 # Create projection ID.
