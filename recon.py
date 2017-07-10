@@ -11,29 +11,51 @@ import matplotlib.pyplot as plt
 
 def makevectors(om):
 	vectors = np.zeros((len(om), 12))
-	theta = np.radians(10.38)	# Insert the correct diffraction angle
-	factor = np.sin(theta) / np.tan(theta)
+	theta = np.radians(90-10.38)	# Insert the correct diffraction angle
+	#factor = np.sin(theta) / np.tan(theta)
 
+	### Clockwise case
 	for i, omi in enumerate(om):
 		# ray direction
-		vectors[i, 0] = np.sin(omi) * factor
-		vectors[i, 1] = -np.cos(omi) * factor
-		vectors[i, 2] = -np.sin(theta)
+		vectors[i, 0] = 1.388E08*np.cos(omi)*np.sin(theta)
+		vectors[i, 1] = 1.388E08*np.sin(theta)*np.sin(omi)
+		vectors[i, 2] = - 1.388E08*np.cos(theta)
 
 		# center of detector
-		vectors[i, 3] = -np.sin(omi) * factor
-		vectors[i, 4] = np.cos(omi) * factor
-		vectors[i, 5] = np.sin(theta)
+		vectors[i, 3] = - np.sin(theta)*np.cos(omi)
+		vectors[i, 4] =  - np.sin(theta)*np.sin(omi)
+		vectors[i, 5] = np.cos(theta)
 
 		# vector from detector pixel (0,0) to (0,1)
-		vectors[i, 6] = np.sin(omi) * factor * np.sin(theta)
-		vectors[i, 7] = np.cos(omi) * factor * np.sin(theta)
-		vectors[i, 8] = np.sin(theta) / np.tan(theta)
+		vectors[i, 6] = - np.sin(omi)
+		vectors[i, 7] = np.cos(omi)
+		vectors[i, 8] = 0
 
 		# vector from detector pixel (0,0) to (1,0)
-		vectors[i, 9] = np.cos(omi)
-		vectors[i, 10] = np.sin(omi)
-		vectors[i, 11] = 0
+		vectors[i, 9] = np.cos(theta)*np.cos(omi)
+		vectors[i, 10] = np.cos(theta)*np.sin(omi)
+		vectors[i, 11] = np.sin(theta)
+
+	### Counterclockwise case
+		# ray direction
+		#vectors[i, 0] = np.sin(theta)
+		#vectors[i, 1] = -np.cos(theta)*np.cos(omi)
+		#vectors[i, 2] = np.cos(theta)*np.sin(omi)
+
+		# center of detector
+		#vectors[i, 3] = 0
+		#vectors[i, 4] = 0
+		#vectors[i, 5] = 0
+
+		# vector from detector pixel (0,0) to (0,1)
+		#vectors[i, 6] = 1
+		#vectors[i, 7] = 0
+		#vectors[i, 8] = 0
+
+		# vector from detector pixel (0,0) to (1,0)
+		#vectors[i, 9] = 0
+		#vectors[i, 10] = np.cos(theta)*np.cos(omi) + np.sin(theta)*np.sin(omi)
+		#vectors[i, 11] = np.cos(omi)*np.sin(theta) - np.cos(theta)*np.sin(omi)
 
 	return vectors
 
@@ -47,11 +69,11 @@ def makevectors(om):
 
 
 # Create volume geometry
-vol_geom = astra.create_vol_geom(50, 50, 50)
+vol_geom = astra.create_vol_geom(200, 200, 200)
 
 # Omega angles, create vector array
 # angles = np.linspace(0, 2 * np.pi, 721, True)
-angles = np.radians(np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy'))
+angles = np.radians(np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy')-90)
 vectors = makevectors(angles)
 
 # Create projection geometry from vector array
@@ -63,9 +85,20 @@ proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/A_3d.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
 # proj_data = adjustcenter(proj_data, [128, 125])
 
+# ASTRA is built to treat transmission, not diffraction data. Therefore, for
+# each omega we calculate the complement of the summed image. We also flip the
+# images, to simulate rotation around the vertical axis
+proj_data_compl = np.zeros(proj_data.shape)
+for oo in range(proj_data.shape[1]):
+	max_proj = np.max(proj_data[:,oo,:])
+	single_layer = np.zeros([proj_data.shape[0], proj_data.shape[2]])
+	single_layer[:,:]= np.rot90(proj_data[:,oo,:])
+	proj_data_compl[:,oo,:] = max_proj - single_layer[:,:]
+
+np.save('roatated_3d.npy', proj_data_compl)
 
 # Create projection ID.
-proj_id = astra.data3d.create('-proj3d', proj_geom, proj_data)
+proj_id = astra.data3d.create('-proj3d', proj_geom, proj_data_compl)
 
 # Create reconstruction ID.
 rec_id = astra.data3d.create('-vol', vol_geom)
