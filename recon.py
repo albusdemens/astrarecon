@@ -73,7 +73,7 @@ vol_geom = astra.create_vol_geom(200, 200, 200)
 
 # Omega angles, create vector array
 # angles = np.linspace(0, 2 * np.pi, 721, True)
-angles = np.radians(np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy')-90)
+angles = np.radians(np.load('/home/gpu/astra_data/April_2017_sundaynight/omega.npy'))
 vectors = makevectors(angles)
 
 # Create projection geometry from vector array
