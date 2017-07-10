@@ -5,19 +5,25 @@ import matplotlib.pyplot as plt
 import lib.EdfFile as EF
 import sys
 import scipy
+from decimal import *
+
+getcontext().prec = 10  # Decimal precision used to clean images
 
 # Load the array with all the images
 
 A = np.load('/u/data/alcer/DFXRM_rec/Rec_test/dataarray.npy')
+A_omega = A.shape[2]
+A_x = A.shape[3]
+A_y = A.shape[4]
 
 # Select projection number
-Sum_img = np.zeros([A.shape[2], A.shape[3], A.shape[4]])
-Clean_sum_img = np.zeros([A.shape[2], A.shape[3], A.shape[4]])
+Sum_img = np.zeros([A_omega, A_x, A_y])
+Clean_sum_img = np.zeros([A_omega, A_x, A_y])
 
-for omega in range(A.shape[2]):
+for omega in range(A_omega):
 
     int = np.empty([A.shape[0], A.shape[1]])
-    Img_array = np.empty([A.shape[0], A.shape[1], A.shape[3], A.shape[4]])
+    Img_array = np.empty([A.shape[0], A.shape[1], A_x, A_y])
     for i in range(A.shape[0]):
         for j in range(A.shape[1]):
             int[i,j] = sum(sum(A[i,j,omega,:,:]))
@@ -25,7 +31,7 @@ for omega in range(A.shape[2]):
                 Img_array[i,j,:,:] = A[i,j,omega,:,:]
 
     # Sum images collected at a certain angle
-    Array_ang_val = np.empty([A.shape[0], A.shape[1], A.shape[3], A.shape[4]])
+    Array_ang_val = np.empty([A.shape[0], A.shape[1], A_x, A_y])
     int = np.empty([A.shape[0], A.shape[1]])
     for ii in range(A.shape[0]):
         for jj in range(A.shape[1]):
@@ -46,25 +52,69 @@ for omega in range(A.shape[2]):
     Clean_sum_img[omega, 0:150, 150:300] = Sum_img[omega, 0:150, 150:300] - M3
     Clean_sum_img[omega, 150:300, 150:300] = Sum_img[omega, 150:300, 150:300] - M4
 
-    # Exclude negative values and hot pixels
+    # Exclude negative values and hot pixels (value estimated using
+    # Clean_hot_pixels.py)
     for i in range(Clean_sum_img.shape[1]):
         for j in range(Clean_sum_img.shape[2]):
             if (Clean_sum_img[omega, i,j] < 0 or Clean_sum_img[omega, i,j] > 4E+05):
                 Clean_sum_img[omega, i,j] = 0
 
-# Calculate the integrated intensity for the cleaned images
-Int_sum = np.zeros([A.shape[2],2])
-for oo in range(A.shape[2]):
+# Let's clean some memory
+del A
+
+# Calculate the integrated intensity and the mean for the cleaned images
+Int_sum = np.zeros([A_omega,2])
+Median_sum = np.zeros([A_omega,2])
+for oo in range(A_omega):
     Int_sum[oo,0] = oo
     Int_sum[oo,1] = sum(sum(Clean_sum_img[oo,:,:]))
+    Median_sum[oo,0] = oo
+    Median_sum[oo,1] = np.mean(Clean_sum_img[oo,:,:])
 
-# Plot the distribution of the integrated intensity as a function of the
-# projection number
+# Plot the distribution of the integrated intensity and of the mean as a
+# function of the projection number
 fig = plt.figure()
 plt.scatter(Int_sum[:,0], Int_sum[:,1])
 plt.title('Integrated intensity per projection after cleaning')
 plt.xlabel('Projection number')
 plt.ylabel('Integrated intensity')
+plt.show()
+
+fig = plt.figure()
+plt.scatter(Median_sum[:,0], Median_sum[:,1])
+plt.title('Average intensity per projection after cleaning')
+plt.xlabel('Projection number')
+plt.ylabel('Average intensity')
+plt.show()
+
+# Divide the summed images by the mean intensity
+Scaled_int = np.zeros([A_omega,A_x,A_y])
+Scaled_int_sum = np.zeros([A_omega,2])
+for oo in range(A_omega):
+    for pp in range(A_x):
+        for qq in range(A_y):
+            if Clean_sum_img[oo,pp,qq] > 0:
+                print Decimal(Clean_sum_img[oo,pp,qq]) / Decimal(np.mean(Clean_sum_img[oo,:,:])) * 100
+                Scaled_int[oo,pp,qq] = Decimal(Clean_sum_img[oo,pp,qq]) / Decimal(np.mean(Clean_sum_img[oo,:,:])) * 100
+                print Scaled_int[oo,pp,qq]
+
+sys.exit()
+
+    #Scaled_int_sum[oo,0] = oo
+    #for pp in range(A_x):
+    #    for qq in range(A_y):
+    #        Scaled_int_sum[oo,1] += Scaled_int[oo,pp,qq]
+
+
+# Plot sum after cleaning
+fig = plt.figure()
+# Data before cleaning
+#plt.scatter(Median_sum[:,0], Median_sum[:,1], s=50, c="red", edgecolor="None", label = "Median before cleaning")
+# Data after cleaning
+plt.scatter(Scaled_int_sum[:,0],Scaled_int_sum[:,1], s=50, c="blue", edgecolor="None", label = "Median after cleaning")
+plt.title('Average intensity per projection after division by median')
+plt.xlabel('Projection number')
+plt.ylabel('Average intensity')
 plt.show()
 
 sys.exit()
