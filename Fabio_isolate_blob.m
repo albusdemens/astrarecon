@@ -18,7 +18,7 @@ for i = 1:size(Fab,1)
     for j = 1:size(Fab,2)
         for k = 1:size(Fab,3)
             All_clean(i,j,k) = Masked_im(j,k); 
-            All_pos(i,j,k) = D(i,j);
+            All_pos(i,j,k) = D(j,k);
         end
     end
 end
@@ -34,15 +34,15 @@ for i = 1:size(All_clean,1)
 end
 
 % Save to an npy file the input for Astra
-writeNPY(Astra_input,'/u/data/alcer/DFXRM_rec/Rec_test/Astra_input.npy');
+%writeNPY(Astra_input,'/u/data/alcer/DFXRM_rec/Rec_test/Astra_input.npy');
 
 % Take one cleaned image
 DDD = zeros(size(Fab,2), size(Fab,3));
 EEE = zeros(size(Fab,2), size(Fab,3));
 for i = 1:size(Fab,2)
     for j = 1:size(Fab,3)
-        DDD(i,j) = All_clean(100,i,j);
-        EEE(i,j) = All_pos(100,i,j);
+        DDD(i,j) = All_clean(2,i,j);
+        EEE(i,j) = All_pos(2,i,j);
     end
 end
 
