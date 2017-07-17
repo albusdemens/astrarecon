@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # Load summed images, saved using clean_images.py
 A = np.load('Clean_sum_img.npy')
 
-Om = 2
+Om = 81
 
 B = np.zeros([A.shape[1], A.shape[2]])
 M = np.mean(A[Om,:,:])
