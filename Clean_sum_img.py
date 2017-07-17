@@ -8,12 +8,14 @@ import os
 import scipy.io
 
 # Directory where the IO data is stored
-io_dir = '/u/data/alcer/DFXRM_rec/Rec_test'
+io_dir = '/u/data/alcer/DFXRM_rec/Rec_test/'
+# Directory with the images 
+im_dir = '/u/data/andcj/hxrm/Al_april_2017/topotomo/sundaynight/'
 
 # List of the image files
-im_paths = np.genfromtxt(os.path.join(io_dir + '/List_images.txt'), dtype = str)
+im_paths = np.genfromtxt(os.path.join(io_dir + 'List_images.txt'), dtype = str)
 # List of the files properties
-im_prop = np.loadtxt(os.path.join(io_dir + '/Image_properties.txt'))
+im_prop = np.loadtxt(os.path.join(io_dir + 'Image_properties.txt'))
 
 Fabio_array = np.zeros([226, 300, 300])
 # For each projection, sum the images and store the result
@@ -21,7 +23,7 @@ for j in range(226):
     sum_om = np.zeros([300,300])
     for i in range(im_prop.shape[0]):
         if im_prop[i,3] == j:
-            img_name = im_paths[i]
+            img_name = os.path.join(im_dir + im_paths[i])
             I = fabio.open(img_name).data
             sum_om[:,:] += I[106:406, 106:406]
     Fabio_array[j,:,:] = sum_om[:,:]
@@ -39,8 +41,8 @@ for j in range(226):
             n_med = n_med + 1
             med_arr[n_med-1, 0] = i
     # Load first and seventh image
-    M1 = im_paths[int(med_arr[0,0])]
-    M2 = im_paths[int(med_arr[6,0])]
+    M1 = os.path.join(im_dir + im_paths[int(med_arr[0,0])])
+    M2 = os.path.join(im_dir + im_paths[int(med_arr[6,0])])
     I1 = fabio.open(M1).data
     I2 = fabio.open(M1).data
     Median_array[j,:,:] = 0.5 * (I1[106:406, 106:406] + I2[106:406, 106:406])
@@ -58,11 +60,11 @@ for i in range(226):
     # Images after cleaning by the rolling median
     Int_bef_aft[i,2] = sum(sum(Median_array[i,:,:]))
 
-fig = plt.figure()
+#fig = plt.figure()
 #plt.scatter(Int_bef_aft[:,0], Int_bef_aft[:,1], color='k', label='Before cleaning')
-plt.scatter(Int_bef_aft[3:226,0], Int_bef_aft[3:226,2], color='g', label='After cleaning')
-plt.title('Integrated intensity after cleaning')
-plt.show()
+#plt.scatter(Int_bef_aft[3:226,0], Int_bef_aft[3:226,2], color='g', label='After cleaning')
+#plt.title('Integrated intensity after cleaning')
+#plt.show()
 
 # Save data for matlab analysis
 #scipy.io.savemat('Fabio_clean.mat',{"foo":Fabio_clean})

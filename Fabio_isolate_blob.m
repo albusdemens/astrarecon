@@ -4,6 +4,7 @@
 
 % Load data file made by Clean_sum_img.py
 clear; close all;
+addpath('/home/nexmap/alcer/Astra/npy-matlab-master/');
 A = load('Fabio_clean.mat');
 Fab = A.foo;
 
@@ -22,9 +23,21 @@ for i = 1:size(Fab,1)
     end
 end
 
+% Export the cleaned data, which will be loaded by getdata.py
+Astra_input = zeros(size(All_clean,2), size(All_clean,1), size(All_clean,3));
+for i = 1:size(All_clean,1)
+    for j = 1:size(All_clean,2)
+        for k = 1:size(All_clean,3)
+            Astra_input(j,i,k) = All_clean(i,j,k);
+        end
+    end
+end
+
+% Save to an npy file the input for Astra
+writeNPY(Astra_input,'/u/data/alcer/DFXRM_rec/Rec_test/Astra_input.npy');
+
 % Take one cleaned image
 DDD = zeros(size(Fab,2), size(Fab,3));
-% Take one clean image
 EEE = zeros(size(Fab,2), size(Fab,3));
 for i = 1:size(Fab,2)
     for j = 1:size(Fab,3)
@@ -41,7 +54,7 @@ subplot(122);
 imagesc(DDD); colormap(jet); title('Cleaned image');
 colorbar;
 
-% This fucntion cleans, for each projection, the summed images using frames
+% This function cleans, for each projection, the summed images using frames
 % with no diffraction signal
 function [Masked_im,D] = clean_fun(C)
 

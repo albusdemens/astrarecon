@@ -81,7 +81,7 @@ proj_geom = astra.create_proj_geom('parallel3d_vec', 300, 300, vectors)
 # proj_geom = astra.create_proj_geom('parallel3d', 1.0, 1.0, 180, 180, angles)
 
 # Import dataset as (u, angles, v). u and v are columns and rows.
-proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/A_3d.npy')
+proj_data = np.load('/home/gpu/astra_data/April_2017_sundaynight/Astra_input.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
 # proj_data = adjustcenter(proj_data, [128, 125])
 
