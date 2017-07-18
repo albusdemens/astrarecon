@@ -47,24 +47,19 @@ for j in range(226):
     I2 = fabio.open(M1).data
     Median_array[j,:,:] = 0.5 * (I1[106:406, 106:406] + I2[106:406, 106:406])
 
+# To take into account the sample rotation, divide by the mean intensity
+mean_int = np.zeros([226,1])
+for i in range(226):
+    mean_int[i] = np.mean(Fabio_array[i,:,:])
+    print mean_int[i]
+
+max_mean = int(max(mean_int))
+
 Fabio_clean = np.zeros([226, 300, 300])
 for j in range(226):
-    Fabio_clean[j,:,:] = Fabio_array[j,:,:] - 49*Median_array[j,:,:]
-
-# Plot integrated intensity before and after cleaning
-Int_bef_aft = np.zeros([226,3])
-for i in range(226):
-    Int_bef_aft[i,0] = i
-    # Images before cleaning by the rolling median
-    Int_bef_aft[i,1] = sum(sum(Fabio_array[i,:,:]))
-    # Images after cleaning by the rolling median
-    Int_bef_aft[i,2] = sum(sum(Median_array[i,:,:]))
-
-#fig = plt.figure()
-#plt.scatter(Int_bef_aft[:,0], Int_bef_aft[:,1], color='k', label='Before cleaning')
-#plt.scatter(Int_bef_aft[3:226,0], Int_bef_aft[3:226,2], color='g', label='After cleaning')
-#plt.title('Integrated intensity after cleaning')
-#plt.show()
+    for k in range(Fabio_array.shape[1]):
+        for l in range(Fabio_array.shape[2]):
+            Fabio_clean[j,k,l] = (Fabio_array[j,k,l] - 49 * Median_array[j,k,l]) 
 
 # Save data for matlab analysis
 #scipy.io.savemat('Fabio_clean.mat',{"foo":Fabio_clean})

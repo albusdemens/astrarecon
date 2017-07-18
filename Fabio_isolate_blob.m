@@ -11,17 +11,32 @@ Fab = A.foo;
 % Here we store all positive values (before cleaning)
 All_pos = zeros(size(Fab,1), size(Fab,2), size(Fab,3));
 % Here we store all clean values
+All_clean_temp = zeros(size(Fab,1), size(Fab,2), size(Fab,3));
 All_clean = zeros(size(Fab,1), size(Fab,2), size(Fab,3));
+mean_mask = zeros(size(Fab,1),1);
 for i = 1:size(Fab,1)
     C = Fab(i, :, :);
     [Masked_im,D] = clean_fun(C);
     for j = 1:size(Fab,2)
         for k = 1:size(Fab,3)
-            All_clean(i,j,k) = Masked_im(j,k); 
+            All_clean_temp(i,j,k) = Masked_im(j,k); 
             All_pos(i,j,k) = D(j,k);
         end
     end
+    mean_mask(i) = mean(mean(Masked_im));
 end
+% To take into account of the varying absorption length as the sample
+% rotates, we divide the images by the average value
+max_mean = max(mean_mask);
+for i = 1:size(Fab,1)
+    for j = 1:size(Fab,2)
+        for k = 1:size(Fab,3)
+            All_clean(i,j,k) = All_clean_temp(i,j,k) / mean_mask(i) * max_mean;
+        end
+    end
+end
+
+save('All_clean_images.mat','All_clean');
 
 % Export the cleaned data, which will be loaded by getdata.py
 Astra_input = zeros(size(All_clean,2), size(All_clean,1), size(All_clean,3));
@@ -36,23 +51,23 @@ end
 % Save to an npy file the input for Astra
 %writeNPY(Astra_input,'/u/data/alcer/DFXRM_rec/Rec_test/Astra_input.npy');
 
-% Take one cleaned image
-DDD = zeros(size(Fab,2), size(Fab,3));
-EEE = zeros(size(Fab,2), size(Fab,3));
-for i = 1:size(Fab,2)
-    for j = 1:size(Fab,3)
-        DDD(i,j) = All_clean(2,i,j);
-        EEE(i,j) = All_pos(2,i,j);
-    end
+% Integrated intensity before and after division by mean
+Int_layer = zeros(size(All_clean,1), 3);
+for i = 1:size(All_clean,1)
+    Int_layer(i,1) = i;
+    Int_layer(i,2) = sum(sum(All_clean_temp(i,:,:)));
+    Int_layer(i,3) = sum(sum(All_clean(i,:,:)));
 end
 
-figure; 
-subplot(121);
-imagesc(EEE); colormap(jet); title('Raw image');
-colorbar;
-subplot(122);
-imagesc(DDD); colormap(jet); title('Cleaned image');
-colorbar;
+figure;
+scatter(Int_layer(:,1), Int_layer(:,2), '.r');
+hold on;
+scatter(Int_layer(:,1), Int_layer(:,3), '.b');
+title('Integrated intensity before and after normalization')
+xlabel('Projection number')
+ylabel('Integrated intensity')
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % This function cleans, for each projection, the summed images using frames
 % with no diffraction signal
