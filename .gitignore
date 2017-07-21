@@ -5,3 +5,5 @@ output/
 Reports/
 
 *.m~
+
+.DS_Store
