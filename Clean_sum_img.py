@@ -1,5 +1,5 @@
 # For each projection, this script loads the relative images, sums
-# them and clean the sum using a rolling median.style approach. 
+# them and clean the sum using a rolling median.style approach.
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ import scipy.io
 
 # Directory where the IO data is stored
 io_dir = '/u/data/alcer/DFXRM_rec/Rec_test/'
-# Directory with the images 
+# Directory with the images
 im_dir = '/u/data/andcj/hxrm/Al_april_2017/topotomo/sundaynight/'
 
 # List of the image files
@@ -31,7 +31,7 @@ for j in range(226):
 Median_array = np.zeros([226, 300, 300])
 # For each projection, select the images to use for some median filtering
 for j in range(226):
-    # List all images relative to an omega, than take first and last of 
+    # List all images relative to an omega, than take first and last of
     # the first line (selected by looking at the data)
     med_arr = np.zeros([49,1])
     n_med = 0
@@ -59,7 +59,7 @@ Fabio_clean = np.zeros([226, 300, 300])
 for j in range(226):
     for k in range(Fabio_array.shape[1]):
         for l in range(Fabio_array.shape[2]):
-            Fabio_clean[j,k,l] = (Fabio_array[j,k,l] - 49 * Median_array[j,k,l]) 
+            Fabio_clean[j,k,l] = (Fabio_array[j,k,l] - 49 * Median_array[j,k,l])
 
 # Save data for matlab analysis
-#scipy.io.savemat('Fabio_clean.mat',{"foo":Fabio_clean})
+#scipy.io.savemat(os.path.join(io_dir + 'Fabio_clean.mat'),{"foo":Fabio_clean})
