@@ -1,9 +1,0 @@
-output/
-
-*.pyc
-
-Reports/
-
-*.m~
-
-.DS_Store
