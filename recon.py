@@ -1,4 +1,8 @@
 #!/bin/python
+
+# python recon.py /home/gpu/astra_input/recon4x4/
+
+#!/bin/python
 # -*- coding: utf-8 -*-
 import sys
 sys.path.append('/usr/local/astra/python')
@@ -11,29 +15,30 @@ import matplotlib.pyplot as plt
 
 def makevectors(om):
 	vectors = np.zeros((len(om), 12))
-	theta = np.radians(10.2)
-	factor = np.sin(theta) / np.tan(theta)
+	mu = np.radians(10.2)
+	factor = np.sin(mu) / np.tan(mu)
 
 	for i, omi in enumerate(om):
+
 		# ray direction
-		vectors[i, 0] = np.sin(omi) * factor
-		vectors[i, 1] = -np.cos(omi) * factor
-		vectors[i, 2] = -np.sin(theta)
+		vectors[i, 0] = np.cos(omi) * np.cos(mu)
+		vectors[i, 1] = np.sin(mu)
+		vectors[i, 2] = - np.sin(omi) * np.cos(mu)
 
 		# center of detector
-		vectors[i, 3] = -np.sin(omi) * factor
-		vectors[i, 4] = np.cos(omi) * factor
-		vectors[i, 5] = np.sin(theta)
+		vectors[i, 3] = 0
+		vectors[i, 4] = 0
+		vectors[i, 5] = 0
 
 		# vector from detector pixel (0,0) to (0,1)
-		vectors[i, 6] = np.sin(omi) * factor * np.sin(theta)
-		vectors[i, 7] = np.cos(omi) * factor * np.sin(theta)
-		vectors[i, 8] = np.sin(theta) / np.tan(theta)
+		vectors[i, 6] = np.sin(omi)
+		vectors[i, 7] = 0
+		vectors[i, 8] = np.cos(omi)
 
 		# vector from detector pixel (0,0) to (1,0)
 		vectors[i, 9] = np.cos(omi)
-		vectors[i, 10] = np.sin(omi)
-		vectors[i, 11] = 0
+		vectors[i, 10] = np.cos(mu)
+		vectors[i, 11] = - np.sin(mu) * np.sin(omi)
 
 	return vectors
 
@@ -54,15 +59,14 @@ vol_geom = astra.create_vol_geom(150, 150, 150)
 angles = np.load('/home/gpu/astra_input/recon4x4/omega.npy')
 vectors = makevectors(angles)
 
-# Create projection geometry from vector array
-proj_geom = astra.create_proj_geom('parallel3d_vec', 150, 150, vectors)
-# proj_geom = astra.create_proj_geom('parallel3d', 1.0, 1.0, 180, 180, angles)
-
 # Import dataset as (u, angles, v). u and v are columns and rows.
-proj_data = np.load('/home/gpu/astra_input/recon4x4/dataarray.npy')
+proj_data = np.load('/home/gpu/astra_input/recon4x4/summed_data_astra.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
 # proj_data = adjustcenter(proj_data, [128, 125])
 
+# Create projection geometry from vector array
+proj_geom = astra.create_proj_geom('parallel3d_vec', proj_data.shape[0], proj_data.shape[2], vectors)
+# proj_geom = astra.create_proj_geom('parallel3d', 1.0, 1.0, 180, 180, angles)
 
 
 # Create projection ID.
@@ -86,8 +90,6 @@ astra.algorithm.run(alg_id, steps)
 
 # Get the result
 rec = astra.data3d.get(rec_id)
-
-print np.max(rec), np.min(rec), np.mean(rec)
 
 rec = (rec - np.min(rec)) / (-np.min(rec) + np.max(rec))
 
