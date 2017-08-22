@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 '''
 Inputs:
 Dataset directory
-Modality (1 if you need to determine threshold and rotation centre, else 2)
+Modality (1 if you need to determine threshold and rotation centre,
+2 to determine rotation axis and 3 to prepare data for reconstruction)
 Threshold for input image (put 0 if you need to determine it)
 '''
 
@@ -19,8 +20,8 @@ Threshold for input image (put 0 if you need to determine it)
 
 class makematrix():
 	def __init__(
-		self, datadir,
-        modality, thr,
+	           self, datadir,
+                        modality, thr,
 		sim=False):
 
             try:
@@ -37,8 +38,8 @@ class makematrix():
             # Load the npy file from getdata.py (on panda2)
             A = np.load(datadir + 'dataarray_final.npy')
 
-            if not (int(mode[0]) == 1 or int(mode[0]) == 2):
-                print 'The only possible modes are 1 and 2'
+            if not (int(mode[0]) == 1 or int(mode[0]) == 2 or int(mode[0]) == 3):
+                print 'The only possible modes are 1 to 3'
                 sys.exit()
 
             elif int(mode[0]) == 1:
@@ -50,10 +51,34 @@ class makematrix():
                         for jj in range(A.shape[1]):
                             Sum[:,:] += A[ii,jj,aa,:,:]
                     fig = plt.figure()
-                    plt.imshow(Sum)
+                    plt.imshow(np.rot90(Sum))
                     plt.show()
 
             elif int(mode[0]) == 2:
+                print 'Determine the rotation axis'
+                # Plot initial, final and middle image, together with their sum
+                Sum_all = np.zeros([A.shape[3], A.shape[4]])
+                count = 0
+                fig = plt.subplots(2, 2, figsize=(8, 8))
+                for aa in range(0, A.shape[2], int((A.shape[2]-1) /2)):
+                        Sum = np.zeros([A.shape[3], A.shape[4]])
+                        count = count + 1
+                        for ii in range(A.shape[0]):
+                                for jj in range(A.shape[1]):
+                                        Sum[:,:] += A[ii,jj,aa,:,:]
+                        if count == 1 or count == 3:
+                                Sum_all += Sum
+                        ax = plt.subplot(2, 2, count)
+                        plt.imshow(np.rot90(Sum))
+                        ax.set_title("Summed intensity at projection %i" % aa)
+
+                ax1 = plt.subplot(2,2,4)
+                plt.imshow(np.rot90(Sum_all))
+                ax1.set_title("Combined firts and last image")
+                plt.show()
+
+
+            elif int(mode[0]) == 3:
                 A_3d = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])	# (x, omega, y)
                 # Sum images recorded at the same omega
                 for oo in range(A.shape[2]):
@@ -63,8 +88,8 @@ class makematrix():
                         for jj in range(A.shape[1]):
                             A_oo[:,:] += A[ii, jj, oo, :, :]
 
-                    #A_oo_th = np.rot90(A_oo)
                     A_oo_th = np.rot90(A_oo)
+                    #A_oo_th = A_oo
                     A_oo_th[A_oo < int(threshold[0])] = 0
 
                     for kk in range(A.shape[3]):

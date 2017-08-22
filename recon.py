@@ -62,7 +62,7 @@ vectors = makevectors(angles)
 # Import dataset as (u, angles, v). u and v are columns and rows.
 proj_data = np.load('/home/gpu/astra_input/recon4x4/summed_data_astra.npy')
 # proj_data = np.load('/u/data/andcj/astra-recon-data/recon90/dataarray.npy')
-# proj_data = adjustcenter(proj_data, [128, 125])
+proj_data = adjustcenter(proj_data, [128, 125])
 
 # Create projection geometry from vector array
 proj_geom = astra.create_proj_geom('parallel3d_vec', proj_data.shape[0], proj_data.shape[2], vectors)
