@@ -102,9 +102,10 @@ if __name__ == "__main__":
 	if len(sys.argv) != 4:
 		print "Wrong number of input parameters. Data input should be:\n\
             Dataset directory\n\
-            Modality (1 if you need to determine which threshold to use, else 2)\n\
+            Modality (1 if you need to determine which threshold to use\n\
+	2 to determine rotation axis, 3 to prepare data)\n\
             Threshold for input image (put 0 if you need to determine it)\n\
-			"
+	"
 	else:
 		mm = makematrix(
 			sys.argv[1],
