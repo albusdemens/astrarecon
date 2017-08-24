@@ -7,6 +7,7 @@
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+from  scipy import ndimage
 
 '''
 Inputs:
@@ -68,13 +69,28 @@ class makematrix():
                                         Sum[:,:] += A[ii,jj,aa,:,:]
                         if count == 1 or count == 3:
                                 Sum_all += Sum
-                        ax = plt.subplot(2, 2, count)
-                        plt.imshow(np.rot90(Sum))
-                        ax.set_title("Summed intensity at projection %i" % aa)
+			ax = plt.subplot(2, 2, count)
+			plt.imshow(np.rot90(Sum))
+			ax.set_title("Summed intensity at projection %i" % aa)
+
+		# Estimate the centroid for the summed image
+		Sum_rot = np.zeros([Sum_all.shape[0], Sum_all.shape[1]])
+		Sum_bin = np.zeros([Sum_all.shape[0], Sum_all.shape[1]])
+		Sum_rot = np.rot90(Sum_all)
+
+		for ii in range(Sum_rot.shape[0]):
+			for jj in range(Sum_rot.shape[1]):
+				if Sum_rot[ii,jj] > 0:
+					Sum_bin[ii,jj] = 1
+		[y_c, x_c] = ndimage.measurements.center_of_mass(Sum_bin)
+
+		print x_c, y_c
 
                 ax1 = plt.subplot(2,2,4)
-                plt.imshow(np.rot90(Sum_all))
-                ax1.set_title("Combined firts and last image")
+                # Show sum of the first and last projection
+		plt.imshow(np.rot90(Sum_all))
+		plt.scatter(x_c, y_c, c='r', s=10)
+                ax1.set_title("Combined first and last image")
                 plt.show()
 
 
