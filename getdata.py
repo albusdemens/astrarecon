@@ -7,6 +7,7 @@
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+import scipy.io
 from  scipy import ndimage
 
 '''
@@ -96,6 +97,7 @@ class makematrix():
 
             elif int(mode[0]) == 3:
                 A_3d = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])	# (x, omega, y)
+                A_3d_mat = np.zeros([A.shape[2], A.shape[3],  A.shape[4]])
                 # Sum images recorded at the same omega
                 for oo in range(A.shape[2]):
                     A_oo = np.zeros([A.shape[3], A.shape[4]])
@@ -106,19 +108,24 @@ class makematrix():
 
                     A_oo_th = np.rot90(A_oo)
                     #A_oo_th = A_oo
-                    A_oo_th[A_oo < int(threshold[0])] = 0
+                    A_oo_th[A_oo_th < int(threshold[0])] = 0
+                    #A_oo_th[A_oo > int(threshold[0])] = 0
+
 
                     for kk in range(A.shape[3]):
                         for ll in range(A.shape[4]):
                             A_3d[kk, oo, ll] = A_oo[kk,ll]
+                            A_3d_mat[oo,kk,ll] = A_oo[kk,ll]
 
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
+                scipy.io.savemat(datadir + 'Sample2_cleaned.mat',{"foo":A_3d_mat})
 
 if __name__ == "__main__":
 	if len(sys.argv) != 4:
 		print "Wrong number of input parameters. Data input should be:\n\
             Dataset directory\n\
-            Modality (1 if you need to determine which threshold to use, else 2)\n\
+            Modality (1 to determine which threshold to use, 2 to determine the\n\
+            Rotation axis, 3 to prepare the data for the reconstruction using ASTRA)\n\
             Threshold for input image (put 0 if you need to determine it)\n\
 			"
 	else:

@@ -22,7 +22,7 @@ class reconstr():
 	def __init__(
         self, datadir,
         centre_est):
-        
+
             centre_est = centre_est.split(',')
             mp = [centre_est[0], centre_est[1]]
 
@@ -65,7 +65,7 @@ class reconstr():
 
 
             # Create volume geometry
-            vol_geom = astra.create_vol_geom(150, 150, 150)
+            vol_geom = astra.create_vol_geom(300, 300, 300)
 
             # Omega angles, create vector array
             # angles = np.linspace(0, 2 * np.pi, 721, True)
@@ -87,7 +87,7 @@ class reconstr():
 
             # Create reconstruction ID.
             rec_id = astra.data3d.create('-vol', vol_geom)
-            cfg = astra.astra_dict('SIRT3D_CUDA')
+	    cfg = astra.astra_dict('SIRT3D_CUDA')
             cfg['ReconstructionDataId'] = rec_id
             cfg['ProjectionDataId'] = proj_id
             # cfg['option'] = {}
@@ -96,7 +96,7 @@ class reconstr():
             # Create algorithm.
             alg_id = astra.algorithm.create(cfg)
 
-            steps = 150
+            steps = 200
             print "Running algorithm, {} steps.".format(steps)
             # Run 150 steps.
             astra.algorithm.run(alg_id, steps)
