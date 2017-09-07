@@ -39,6 +39,7 @@ class makematrix():
 
             # Load the npy file from getdata.py (on panda2)
             A = np.load(datadir + 'dataarray_final.npy')
+            B = np.load(datadir + 'dataarray.npy')
 
             if not (int(mode[0]) == 1 or int(mode[0]) == 2 or int(mode[0]) == 3):
                 print 'The only possible modes are 1 to 3'
