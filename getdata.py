@@ -13,7 +13,8 @@ Inputs:
 Dataset directory
 Modality (1 if you need to determine threshold and rotation centre,
 2 to determine rotation axis and 3 to prepare data for reconstruction)
-Threshold for input image (put 0 if you need to determine it)
+Lower threshold (put 0 if you need to determine it)
+Upper threshold (put 0 if you need to determine it)
 '''
 
 # Note: the standard frame size for the background subtraction is 20 pixels
@@ -21,7 +22,8 @@ Threshold for input image (put 0 if you need to determine it)
 class makematrix():
 	def __init__(
 	           self, datadir,
-                        modality, thr,
+                        modality, thr_lo,
+                        thr_up,
 		sim=False):
 
             try:
@@ -33,7 +35,8 @@ class makematrix():
                 self.size = 1
 
             mode = modality.split(',')
-            threshold = thr.split(',')
+            thr_lo = thr_lo.split(',')
+            thr_up = thr_up.split(',')
 
             # Load the npy file from getdata.py (on panda2)
             A = np.load(datadir + 'dataarray_final.npy')
@@ -45,7 +48,7 @@ class makematrix():
             elif int(mode[0]) == 1:
                 print 'Determine threhold from the following images'
                 # Plot 4 images, to help the user select which threshold to use
-                for aa in range(0, A.shape[2], int(A.shape[2]/4)):
+                for aa in range(0, A.shape[2], int(A.shape[2]/10)):
                     Sum = np.zeros((A.shape[3], A.shape[4]))
                     for ii in range(A.shape[0]):
                         for jj in range(A.shape[1]):
@@ -90,7 +93,9 @@ class makematrix():
 
                     A_oo_th = np.rot90(A_oo)
                     #A_oo_th = A_oo
-                    A_oo_th[A_oo < int(threshold[0])] = 0
+                    A_oo_th[A_oo < int(thr_lo[0])] = 0
+                    if int(thr_up[0]) > 0:
+			    A_oo_th[A_oo > int(thr_up[0])] = 0
 
                     for kk in range(A.shape[3]):
                         for ll in range(A.shape[4]):
@@ -99,16 +104,18 @@ class makematrix():
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
 
 if __name__ == "__main__":
-	if len(sys.argv) != 4:
+	if len(sys.argv) != 5:
 		print "Wrong number of input parameters. Data input should be:\n\
             Dataset directory\n\
             Modality (1 if you need to determine which threshold to use\n\
-	2 to determine rotation axis, 3 to prepare data)\n\
-            Threshold for input image (put 0 if you need to determine it)\n\
+       	    2 to determine rotation axis, 3 to prepare data)\n\
+            Lower threshold (put 0 if you need to determine it)\n\
+            Upper threshold (put 0 if you need to determine it)\n\
 	"
 	else:
 		mm = makematrix(
 			sys.argv[1],
 			sys.argv[2],
-			sys.argv[3]
+			sys.argv[3],
+			sys.argv[4]
 			)
