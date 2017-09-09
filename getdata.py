@@ -7,6 +7,8 @@
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+import scipy.io
+from  scipy import ndimage
 
 '''
 Inputs:
@@ -40,6 +42,7 @@ class makematrix():
 
             # Load the npy file from getdata.py (on panda2)
             A = np.load(datadir + 'dataarray_final.npy')
+            B = np.load(datadir + 'dataarray.npy')
 
             if not (int(mode[0]) == 1 or int(mode[0]) == 2 or int(mode[0]) == 3):
                 print 'The only possible modes are 1 to 3'
@@ -71,18 +74,34 @@ class makematrix():
                                         Sum[:,:] += A[ii,jj,aa,:,:]
                         if count == 1 or count == 3:
                                 Sum_all += Sum
-                        ax = plt.subplot(2, 2, count)
-                        plt.imshow(np.rot90(Sum))
-                        ax.set_title("Summed intensity at projection %i" % aa)
+			ax = plt.subplot(2, 2, count)
+			plt.imshow(np.rot90(Sum))
+			ax.set_title("Summed intensity at projection %i" % aa)
+
+		# Estimate the centroid for the summed image
+		Sum_rot = np.zeros([Sum_all.shape[0], Sum_all.shape[1]])
+		Sum_bin = np.zeros([Sum_all.shape[0], Sum_all.shape[1]])
+		Sum_rot = np.rot90(Sum_all)
+
+		for ii in range(Sum_rot.shape[0]):
+			for jj in range(Sum_rot.shape[1]):
+				if Sum_rot[ii,jj] > 0:
+					Sum_bin[ii,jj] = 1
+		[y_c, x_c] = ndimage.measurements.center_of_mass(Sum_bin)
+
+		print x_c, y_c
 
                 ax1 = plt.subplot(2,2,4)
-                plt.imshow(np.rot90(Sum_all))
-                ax1.set_title("Combined firts and last image")
+                # Show sum of the first and last projection
+		plt.imshow(np.rot90(Sum_all))
+		plt.scatter(x_c, y_c, c='r', s=10)
+                ax1.set_title("Combined first and last image")
                 plt.show()
 
 
             elif int(mode[0]) == 3:
                 A_3d = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])	# (x, omega, y)
+                A_3d_mat = np.zeros([A.shape[2], A.shape[3],  A.shape[4]])
                 # Sum images recorded at the same omega
                 for oo in range(A.shape[2]):
                     A_oo = np.zeros([A.shape[3], A.shape[4]])
@@ -100,8 +119,10 @@ class makematrix():
                     for kk in range(A.shape[3]):
                         for ll in range(A.shape[4]):
                             A_3d[kk, oo, ll] = A_oo[kk,ll]
+                            A_3d_mat[oo,kk,ll] = A_oo[kk,ll]
 
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
+                scipy.io.savemat(datadir + 'Sample2_cleaned.mat',{"foo":A_3d_mat})
 
 if __name__ == "__main__":
 	if len(sys.argv) != 5:
