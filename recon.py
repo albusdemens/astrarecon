@@ -24,7 +24,7 @@ class reconstr():
         centre_est):
 
             centre_est = centre_est.split(',')
-            mp = [centre_est[0], centre_est[1]]
+            mp = [int(centre_est[0]), int(centre_est[1])]
 
             def makevectors(om):
                 vectors = np.zeros((len(om), 12))
@@ -58,9 +58,9 @@ class reconstr():
 
             def adjustcenter(dataarray, mp):
                 new_array = dataarray[
-                mp[0] - 100:mp[0] + 100,
+                int(mp[0]) - 100:int(mp[0]) + 100,
                 :,
-                mp[1] - 100:mp[1] + 100]
+                int(mp[1]) - 100:int(mp[1]) + 100]
                 return new_array
 
 
@@ -96,9 +96,8 @@ class reconstr():
             # Create algorithm.
             alg_id = astra.algorithm.create(cfg)
 
-            steps = 200
+            steps = 250
             print "Running algorithm, {} steps.".format(steps)
-            # Run 150 steps.
             astra.algorithm.run(alg_id, steps)
 
             # Get the result
@@ -118,9 +117,9 @@ class reconstr():
             # 					ix, iy, iz, s=2, c=rec[ix, iy, iz])
 
             rs = np.shape(rec)
-            b = 10
+            b_frame = 10
 
-            cropped_rec = rec[b:rs[0] - b, b:rs[1] - b, b:rs[2] - b]
+            cropped_rec = rec[b_frame:rs[0] - b_frame, b_frame:rs[1] - b_frame, b_frame:rs[2] - b_frame]
 
             fig = plt.figure(frameon=False)
 
@@ -159,5 +158,5 @@ if __name__ == "__main__":
 	else:
 		mm = reconstr(
 			sys.argv[1],
-            sys.argv[2]
+			sys.argv[2]
 			)
