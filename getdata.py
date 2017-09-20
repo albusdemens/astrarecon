@@ -118,8 +118,12 @@ class makematrix():
 
                     for kk in range(A.shape[3]):
                         for ll in range(A.shape[4]):
-                            A_3d[kk, oo, ll] = A_oo[kk,ll]
+                            A_3d[kk,oo,ll] = A_oo[kk,ll]
                             A_3d_mat[oo,kk,ll] = A_oo[kk,ll]
+
+							fig = plt.figure()
+							plt.imshow(A_3d)
+							plt.show()
 
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
                 scipy.io.savemat(datadir + 'Sample2_cleaned.mat',{"foo":A_3d_mat})
