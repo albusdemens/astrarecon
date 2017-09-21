@@ -1,6 +1,9 @@
 % This script locates, in the images summed at the different projections,
-% the maximum intensity value. Aim: study misalignement between G vector
-% and rotation axis
+% the centyer of mass of the intensity value. Aim: study horizontal shift
+% of the rotation axis.
+
+% Two cases are considered: CM using recorded intensity, and CM using
+% position only (equivalent to consider a binary image)
 
 clear; close all;
 
