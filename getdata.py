@@ -125,19 +125,23 @@ class makematrix():
                             #A_3d_mat[oo,kk,ll] = A_oo_th[kk,ll]
 
 		# Normalize summed images
-		Mean = np.zeros([A.shape[2], 2]) 
+		Mean = np.zeros([A.shape[2], 2])
 		for oo in (range(96) +range(121,156) + range(157, 161)):
 			Mean[oo,0] = oo
 			Mean[oo,1] = np.mean(A_3d[:,oo,:])
 
-		
+
 		Max_mean = max(Mean[:,1])
 		for oo in (range(96) +range(121,156) + range(157, 161)):
 			A_3d_final[:,oo,:] = (A_3d[:,oo,:]/Mean[oo,1])#*Max_mean
 
 		    	for kk in range(A.shape[3]):
                         	for ll in range(A.shape[4]):
-                            		A_3d_mat[oo,kk,ll] = A_3d_final[kk,oo,ll] 
+                            		A_3d_mat[oo,kk,ll] = A_3d_final[kk,oo,ll]
+
+							fig = plt.figure()
+							plt.imshow(A_3d)
+							plt.show()
 
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
                 scipy.io.savemat(datadir + 'Sample2_cleaned.mat',{"foo":A_3d_mat})
