@@ -23,10 +23,10 @@ Upper threshold (put 0 if you need to determine it)
 
 class makematrix():
 	def __init__(
-	           self, datadir,
-                        modality, thr_lo,
-                        thr_up,
-		sim=False):
+                 self, datadir,
+                 modality, thr_lo,
+                 thr_up,
+                 sim=False):
 
             try:
                 self.comm = MPI.COMM_WORLD
@@ -101,9 +101,10 @@ class makematrix():
 
             elif int(mode[0]) == 3:
                 A_3d = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])	# (x, omega, y)
-                A_3d_mat = np.zeros([A.shape[2], A.shape[3],  A.shape[4]])
+                A_3d_final = np.zeros([A.shape[3], A.shape[2],  A.shape[4]])
+		A_3d_mat = np.zeros([A.shape[2], A.shape[3],  A.shape[4]])
                 # Sum images recorded at the same omega
-				for oo in (range(96) +range(121,156) + range(157, 161))
+		for oo in (range(96) +range(121,156) + range(157, 161)):
                 #for oo in range(A.shape[2]):
                     A_oo = np.zeros([A.shape[3], A.shape[4]])
                     A_oo_th = np.zeros([A.shape[3], A.shape[4]])
@@ -121,7 +122,22 @@ class makematrix():
                     for kk in range(A.shape[3]):
                         for ll in range(A.shape[4]):
                             A_3d[kk,oo,ll] = A_oo_th[kk,ll]
-                            A_3d_mat[oo,kk,ll] = A_oo_th[kk,ll]
+                            #A_3d_mat[oo,kk,ll] = A_oo_th[kk,ll]
+
+		# Normalize summed images
+		Mean = np.zeros([A.shape[2], 2]) 
+		for oo in (range(96) +range(121,156) + range(157, 161)):
+			Mean[oo,0] = oo
+			Mean[oo,1] = np.mean(A_3d[:,oo,:])
+
+		
+		Max_mean = max(Mean[:,1])
+		for oo in (range(96) +range(121,156) + range(157, 161)):
+			A_3d_final[:,oo,:] = (A_3d[:,oo,:]/Mean[oo,1])#*Max_mean
+
+		    	for kk in range(A.shape[3]):
+                        	for ll in range(A.shape[4]):
+                            		A_3d_mat[oo,kk,ll] = A_3d_final[kk,oo,ll] 
 
                 np.save(datadir + '/summed_data_astra.npy', A_3d)
                 scipy.io.savemat(datadir + 'Sample2_cleaned.mat',{"foo":A_3d_mat})
