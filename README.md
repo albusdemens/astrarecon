@@ -2,7 +2,7 @@
 
 Reconstructs the topo-tomography dataset collected at ID06 using dark-field X-ray microscopy (DFXRM). The reconstruction is performed using the [ASTRA Toolbox](http://www.astra-toolbox.com/). Still a work in progress.
 
-The reconstruction code is designed to run on a GPU-equipped machine.
+The ASTRA reconstruction code is designed to run on a GPU-equipped machine.
 
 Reconstruction steps:
 
