@@ -1,6 +1,6 @@
 # Astrarecon
 
-Reconstructs the topo-tomography dataset collected at ID06 using dark-field X-ray microscopy (DFXRM). The reconstruction is performed using the (ASTRA Toolbox)[http://www.astra-toolbox.com/]. Still a work in progress.
+Reconstructs the topo-tomography dataset collected at ID06 using dark-field X-ray microscopy (DFXRM). The reconstruction is performed using the [ASTRA Toolbox](http://www.astra-toolbox.com/). Still a work in progress.
 
 The reconstruction code is designed to run on a GPU-equipped machine.
 
@@ -12,4 +12,4 @@ Reconstruction steps:
 
  3. Get a feeling of the reconstruction quality using ’makemovie.py’
 
-The scripts ’gpurun.py’ and ’pandarun.py’ are designed to copy data between Panda2 and the GPU machine. 
+The scripts ’gpurun.py’ and ’pandarun.py’ are designed to copy data between Panda2 and the GPU machine.
