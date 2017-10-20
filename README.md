@@ -1,6 +1,8 @@
 # Astrarecon
 
-The code in this repository reconstructs topo-tomography datasets collected at ID06 using dark-field X-ray microscopy (DFXRM). The reconstruction is performed using the [ASTRA Toolbox](http://www.astra-toolbox.com/). Still a work in progress. This reconstruction approach can be combined with the[Recon3D](https://github.com/albusdemens/Recon3D) one, which can be applied to the same input data and returns shape and orientation distribution of the considered grain. 
+*** Still a work in progress ***
+
+The code in this repository reconstructs topo-tomography datasets collected at ID06 using dark-field X-ray microscopy (DFXRM). The reconstruction is performed using the [ASTRA Toolbox](http://www.astra-toolbox.com/). This reconstruction approach can be combined with the[Recon3D](https://github.com/albusdemens/Recon3D) one, which can be applied to the same input data and returns shape and orientation distribution of the considered grain.
 
 The ASTRA reconstruction code is optimized to run on a GPU-equipped machine.
 
