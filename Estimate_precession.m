@@ -1,3 +1,6 @@
+% Alberto Cereser, September 2017
+% DTU Fysik, alcer@fysik.dtu.dk
+
 % This script locates, in the images summed at the different projections,
 % the centyer of mass of the intensity value. Aim: study horizontal shift
 % of the rotation axis.
@@ -33,16 +36,16 @@ for i = 1:size(Data,1)
                 if Layer(j,k) > 0
                     X_CM = X_CM + Layer(j,k) *j;
                     Y_CM = Y_CM + Layer(j,k)*k;
-                    X_CM_bin = X_CM_bin + j; 
-                    Y_CM_bin = Y_CM_bin + k; 
-                    
+                    X_CM_bin = X_CM_bin + j;
+                    Y_CM_bin = Y_CM_bin + k;
+
                 end
             end
         end
         pos_max(i,1) = i;
         pos_max(i,2) = X_CM/sum(sum(Layer));
         pos_max(i,3) = Y_CM/sum(sum(Layer));
-        
+
         pos_max_bin(i,1) = i;
         pos_max_bin(i,2) = X_CM_bin/nnz(Layer);%sum(sum(Layer));
         pos_max_bin(i,3) = Y_CM_bin/nnz(Layer);%sum(sum(Layer));
@@ -60,7 +63,7 @@ CM_y_bin = sum(pos_max_bin(:,2))/size(pos_max_bin,1);
 CM_x_bin = sum(pos_max_bin(:,3))/size(pos_max_bin,1);
 
 % Plot centre of mass for each projection, together with global CM
-figure; 
+figure;
 subplot(1,2,1);
 plot(pos_max(:,2), pos_max(:,3), '-.');
 xlabel('X'); ylabel('Y');

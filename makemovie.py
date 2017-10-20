@@ -1,3 +1,8 @@
+# Anders C. Jakobsen, July 2017
+# DTU Fysik
+
+# Script to efficiently visualize the result of the ASTRA reconstruction 
+
 #!/bin/python
 # -*- coding: utf-8 -*-
 

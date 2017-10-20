@@ -1,3 +1,6 @@
+% Alberto Cereser, September 2017
+% DTU Fysik, alcer@fysik.dtu.dk
+
 % This script shows the sinogram for the collected projections, to help deciding
 % if there are projections to exclude
 

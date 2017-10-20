@@ -1,3 +1,9 @@
+# Anders C. Jakobsen and Alberto Cereser, July 2017
+# DTU Fysik, alcer@fysik.dtu.dk
+
+# Script to reconstruct the data collected in a topotomo scan using the ASTRA
+# toolbox
+
 #!/bin/python
 
 # python recon.py /home/gpu/astra_input/recon4x4/

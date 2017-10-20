@@ -1,3 +1,9 @@
+# Anders C. Jakobsen, July 2017
+# DTU Fysik
+
+# Script to manage the reconstruction code on the GPU machine at DTU Fysik and
+# on Panda2
+
 #!/usr/local/bin/python
 
 import os
