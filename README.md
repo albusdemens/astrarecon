@@ -14,4 +14,4 @@ Reconstruction steps:
 
  3. Get a feeling of the reconstruction quality using `makemovie.py`
 
-The scripts `gpurun.py` and `pandarun.py` are designed to shuffle data between Panda2 and the GPU machine.
+The scripts `gpurun.py` and `pandarun.py` are designed to transfer data between Panda2 and the GPU machine.
