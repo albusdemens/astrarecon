@@ -16,10 +16,10 @@ Reconstruction steps:
 
  1. Use `getdata.py` to load, process and store the collected frames. The script also sums, projection by projection, the collected frames. The script runs on Panda2
 
- 2. Reconstruct the sample 3D shape on a GPU machine using `recon.py`
+ 2. Reconstruct the 3D shape of the sample on a GPU machine using `recon.py`
 
- 3. Check the reconstruction quality using `makemovie.py`
+ 3. Check the reconstruction quality using `makemovie.py`. The script runs on a GPU machine; to visualize the results copy the data to your machine or to Panda2
 
  The functioning of the script is described in the [Recon3D manual](https://github.com/albusdemens/Recon3D/blob/master/Manual_Recon3D.pdf).
 
-The scripts `gpurun.py` and `pandarun.py` are designed to transfer data between Panda2 and the GPU machine.
+Use the scripts `gpurun.py` and `pandarun.py` to transfer data between Panda2 and the GPU machine.
