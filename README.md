@@ -23,3 +23,7 @@ Reconstruction steps:
  The functioning of the script is described in the [Recon3D manual](https://github.com/albusdemens/Recon3D/blob/master/Manual_Recon3D.pdf).
 
 Use the scripts `gpurun.py` and `pandarun.py` to transfer data between Panda2 and the GPU machine.
+
+## License
+
+This software is covered by the GNU General Public License.
