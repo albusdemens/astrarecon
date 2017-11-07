@@ -1,10 +1,8 @@
 # Astrarecon
 
-Contributors: A.C. Jakobsen, A. Cereser
-
-Technical University of Denmark, Department of Physics, NEXMAP
-
-andcj@fysik.dtu.dk, alcer@fysik.dtu.dk
+Copyright 2016-2017, All rights reserved
+Technical University of Denmark, Kongens Lyngby, Denmark
+Code written by A.C. Jakobsen, A. Cereser
 
 *** Still a work in progress ***
 
